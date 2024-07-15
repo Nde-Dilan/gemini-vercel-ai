@@ -32,7 +32,7 @@ async function UserOrLogin() {
         </>
       ) : (
         <Link href="/new" rel="nofollow">
-          <img className="size-6" src="/images/gemini.png" alt="gemini logo" />
+          <img className="size-6" src="/images/logo.svg" alt="gemini logo" />
         </Link>
       )}
       <div className="flex items-center">
@@ -61,7 +61,7 @@ export function Header() {
         <Button asChild size="sm" variant="ghost">
           <a
             target="_blank"
-            href="https://github.com/vercel-labs/gemini-chatbot"
+            href="https://carepulse-healtcare.vercel.app"
             rel="noopener noreferrer"
           >
             <IconMessage />
