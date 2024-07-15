@@ -119,8 +119,8 @@ export function PromptForm({
         }}
       />
       <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-zinc-100 px-12 sm:rounded-full sm:px-12">
-        {/* <Tooltip>
-          <TooltipTrigger asChild> */}
+        <Tooltip>
+          <TooltipTrigger asChild>
         <Button
           variant="outline"
           size="icon"
@@ -132,9 +132,9 @@ export function PromptForm({
           <IconPlus />
           <span className="sr-only">New Chat</span>
         </Button>
-        {/* </TooltipTrigger>
+        </TooltipTrigger>
           <TooltipContent>Add Attachments</TooltipContent>
-        </Tooltip> */}
+        </Tooltip>
         <Textarea
           ref={inputRef}
           tabIndex={0}

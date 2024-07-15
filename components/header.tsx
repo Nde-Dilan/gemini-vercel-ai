@@ -7,6 +7,8 @@ import { auth } from '@/auth'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
   IconGitHub,
+  IconMessage,
+  IconPlus,
   IconNextChat,
   IconSeparator,
   IconVercel
@@ -62,18 +64,18 @@ export function Header() {
             href="https://github.com/vercel-labs/gemini-chatbot"
             rel="noopener noreferrer"
           >
-            <IconGitHub />
-            <span className="hidden ml-2 md:flex">GitHub</span>
+            <IconMessage />
+            <span className="hidden ml-2 md:flex">Book Appointment</span>
           </a>
         </Button>
         <Button asChild size="sm" className="rounded-lg gap-1">
           <a
-            href="https://vercel.com/templates/next.js/gemini-ai-chatbot"
+            href="https://wa.me/237694525931"
             target="_blank"
           >
-            <IconVercel className="size-3" />
-            <span className="hidden sm:block">Deploy to Vercel</span>
-            <span className="sm:hidden">Deploy</span>
+            <IconPlus className="size-3" />
+            <span className="hidden sm:block">Contact Us</span>
+            <span className="sm:hidden">Contact</span>
           </a>
         </Button>
       </div>

@@ -38,15 +38,25 @@ export function ChatPanel({
 
   const exampleMessages = [
     {
-      heading: 'List flights flying from',
-      subheading: 'San Francisco to Rome today',
-      message: `List flights flying from San Francisco to Rome today`
+      heading: 'What traditional remedies',
+      subheading: 'can help with a fever?',
+      message: 'What traditional Cameroonian remedies can help with a fever?'
     },
     {
-      heading: 'What is the status',
-      subheading: 'of flight BA142?',
-      message: 'What is the status of flight BA142?'
-    }
+      heading: 'How do I prepare',
+      subheading: 'neem leaf for malaria?',
+      message: 'How do I prepare neem leaf as a traditional remedy for malaria symptoms?'
+    },
+   /* {
+      heading: 'When should I',
+      subheading: 'seek professional medical help?',
+      message: 'When should I seek professional medical help instead of using traditional remedies?'
+    },
+    {
+      heading: 'What are the benefits',
+      subheading: 'of bitter kola?',
+      message: 'What are the health benefits of bitter kola in traditional Cameroonian medicine?'
+    }*/
   ]
 
   return (
