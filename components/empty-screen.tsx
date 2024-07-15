@@ -10,16 +10,18 @@ export function EmptyScreen() {
         <p className="leading-normal text-zinc-900">
           This is an AI-powered chatbot trained to provide immediate, culturally
           relevant health advice based on traditional Cameroonian medicine
-          practices. It's designed to bridge the gap between traditional wisdom
-          and modern healthcare accessibility.
+          practices. It&apos;s designed to bridge the gap between traditional
+          wisdom and modern healthcare accessibility.
         </p>
         <p className="leading-normal text-zinc-900">
-          It's like having a <b>Wise village elder</b> and a modern doctor in your
-          pocket– we're the {` `}
-          <ExternalLink href={'https://www.webmd.com/'}>WhatsApp</ExternalLink>{' '}
+          It&apos;s like having a <b>Wise village elder</b> and a modern doctor
+          in your pocket– we&apos;re the{' '}
+          <ExternalLink href={'https://wa.me/237694525931/'}>
+            WhatsApp
+          </ExternalLink>{' '}
           meets{' '}
-          <ExternalLink href={'https://www.webmd.com/'}>WebMD</ExternalLink>'
-          for African traditional médicine.
+          <ExternalLink href={'https://www.webmd.com/'}>WebMD</ExternalLink>
+          for African traditional medicine.
         </p>
       </div>
     </div>
