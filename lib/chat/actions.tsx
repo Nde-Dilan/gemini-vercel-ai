@@ -35,12 +35,10 @@ import { Destinations } from '@/components/flights/destinations'
 import { Video } from '@/components/media/video'
 import { rateLimit } from './ratelimit'
 
-
-
 const AIResponse = ({ text }) => (
   <div>
     <h3>AI Analysis:</h3>
-    <p style={{ whiteSpace: 'pre-wrap' }}>{text}</p>
+    <p style={{ whiteSpace: 'pre-wrap' }}><BotMessage content={text}/></p>
   </div>
 )
 const genAI = new GoogleGenerativeAI(
@@ -58,10 +56,16 @@ async function describeImage(imageBase64: string) {
   const uiStream = createStreamableUI()
 
   uiStream.update(
-    <BotCard>
-      <img src={imageBase64} alt="User uploaded image" style={{maxWidth: '100%', height: 'auto'}} />
-    </BotCard>
+    <UserMessage showAvatar>
+      {' '}
+      <img
+        src={imageBase64}
+        alt="User uploaded image"
+        style={{ maxWidth: '100%', height: 'auto' }}
+      />
+    </UserMessage>
   )
+  
   ;(async () => {
     try {
       let text = ''
@@ -98,7 +102,7 @@ Remember, this identification is for informational purposes only and should not 
 
         const result = await model.generateContent([prompt, image])
         text = result.response.text()
-        console.log("Results: ", text)
+        console.log('Results: ', text)
       }
 
       spinnerStream.done(null)
@@ -106,11 +110,15 @@ Remember, this identification is for informational purposes only and should not 
 
       uiStream.done(
         <BotCard>
-          <img src={imageBase64} alt="User uploaded image" style={{maxWidth: '100%', height: 'auto'}} />
+          <img
+            src={imageBase64}
+            alt="User uploaded image"
+            style={{ maxWidth: '100%', height: 'auto' }}
+          />
           <AIResponse text={text} />
         </BotCard>
       )
-//TODO: Find the AIResponse component and replace the one that i
+      //TODO: Find the AIResponse component and replace the one that i
       aiState.done({
         ...aiState.get(),
         interactions: [text]
@@ -171,86 +179,6 @@ async function submitUserMessage(content: string) {
       const result = await streamText({
         model: google('models/gemini-1.5-flash'),
         temperature: 0,
-        tools: {
-          showFlights: {
-            description:
-              "List available flights in the UI. List 3 that match user's query.",
-            parameters: z.object({
-              departingCity: z.string(),
-              arrivalCity: z.string(),
-              departingAirport: z.string().describe('Departing airport code'),
-              arrivalAirport: z.string().describe('Arrival airport code'),
-              date: z
-                .string()
-                .describe(
-                  "Date of the user's flight, example format: 6 April, 1998"
-                )
-            })
-          },
-          listDestinations: {
-            description: 'List destinations to travel cities, max 5.',
-            parameters: z.object({
-              destinations: z.array(
-                z
-                  .string()
-                  .describe(
-                    'List of destination cities. Include rome as one of the cities.'
-                  )
-              )
-            })
-          },
-          showSeatPicker: {
-            description:
-              'Show the UI to choose or change seat for the selected flight.',
-            parameters: z.object({
-              departingCity: z.string(),
-              arrivalCity: z.string(),
-              flightCode: z.string(),
-              date: z.string()
-            })
-          },
-          showHotels: {
-            description: 'Show the UI to choose a hotel for the trip.',
-            parameters: z.object({ city: z.string() })
-          },
-          checkoutBooking: {
-            description:
-              'Show the UI to purchase/checkout a flight and hotel booking.',
-            parameters: z.object({ shouldConfirm: z.boolean() })
-          },
-          showBoardingPass: {
-            description: "Show user's imaginary boarding pass.",
-            parameters: z.object({
-              airline: z.string(),
-              arrival: z.string(),
-              departure: z.string(),
-              departureTime: z.string(),
-              arrivalTime: z.string(),
-              price: z.number(),
-              seat: z.string(),
-              date: z
-                .string()
-                .describe('Date of the flight, example format: 6 April, 1998'),
-              gate: z.string()
-            })
-          },
-          showFlightStatus: {
-            description:
-              'Get the current status of imaginary flight by flight number and date.',
-            parameters: z.object({
-              flightCode: z.string(),
-              date: z.string(),
-              departingCity: z.string(),
-              departingAirport: z.string(),
-              departingAirportCode: z.string(),
-              departingTime: z.string(),
-              arrivalCity: z.string(),
-              arrivalAirport: z.string(),
-              arrivalAirportCode: z.string(),
-              arrivalTime: z.string()
-            })
-          }
-        },
         system: `\
 
 You are a friendly AI assistant trained in traditional Cameroonian medicine. You help users with health inquiries, providing culturally relevant advice and remedies based on traditional practices. You can offer guidance on common ailments, suggest appropriate herbal treatments, and advise when professional medical help should be sought.
@@ -297,183 +225,6 @@ Remember to always prioritize user safety and emphasize that this advice does no
               }
             ]
           })
-        } else if (type === 'tool-call') {
-          const { toolName, args } = delta
-
-          if (toolName === 'listDestinations') {
-            const { destinations } = args
-
-            uiStream.update(
-              <BotCard>
-                <Destinations destinations={destinations} />
-              </BotCard>
-            )
-
-            aiState.done({
-              ...aiState.get(),
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'user',
-                  content: 'User uploaded an image',
-                  display: {
-                    name: 'userImage',
-                    props: { imageBase64 }
-                  }
-                },
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content: text,
-                  display: {
-                    name: 'aiResponse',
-                    props: { text }
-                  }
-                }
-              ]
-            })
-          } else if (toolName === 'showFlights') {
-            aiState.done({
-              ...aiState.get(),
-              interactions: [],
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content:
-                    "Here's a list of flights for you. Choose one and we can proceed to pick a seat.",
-                  display: {
-                    name: 'showFlights',
-                    props: {
-                      summary: args
-                    }
-                  }
-                }
-              ]
-            })
-
-            uiStream.update(
-              <BotCard>
-                <ListFlights summary={args} />
-              </BotCard>
-            )
-          } else if (toolName === 'showSeatPicker') {
-            aiState.done({
-              ...aiState.get(),
-              interactions: [],
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content:
-                    "Here's a list of available seats for you to choose from. Select one to proceed to payment.",
-                  display: {
-                    name: 'showSeatPicker',
-                    props: {
-                      summary: args
-                    }
-                  }
-                }
-              ]
-            })
-
-            uiStream.update(
-              <BotCard>
-                <SelectSeats summary={args} />
-              </BotCard>
-            )
-          } else if (toolName === 'showHotels') {
-            aiState.done({
-              ...aiState.get(),
-              interactions: [],
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content:
-                    "Here's a list of hotels for you to choose from. Select one to proceed to payment.",
-                  display: {
-                    name: 'showHotels',
-                    props: {}
-                  }
-                }
-              ]
-            })
-
-            uiStream.update(
-              <BotCard>
-                <ListHotels />
-              </BotCard>
-            )
-          } else if (toolName === 'checkoutBooking') {
-            aiState.done({
-              ...aiState.get(),
-              interactions: []
-            })
-
-            uiStream.update(
-              <BotCard>
-                <PurchaseTickets />
-              </BotCard>
-            )
-          } else if (toolName === 'showBoardingPass') {
-            aiState.done({
-              ...aiState.get(),
-              interactions: [],
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content:
-                    "Here's your boarding pass. Please have it ready for your flight.",
-                  display: {
-                    name: 'showBoardingPass',
-                    props: {
-                      summary: args
-                    }
-                  }
-                }
-              ]
-            })
-
-            uiStream.update(
-              <BotCard>
-                <BoardingPass summary={args} />
-              </BotCard>
-            )
-          } else if (toolName === 'showFlightStatus') {
-            aiState.update({
-              ...aiState.get(),
-              interactions: [],
-              messages: [
-                ...aiState.get().messages,
-                {
-                  id: nanoid(),
-                  role: 'assistant',
-                  content: `The flight status of ${args.flightCode} is as follows:
-                Departing: ${args.departingCity} at ${args.departingTime} from ${args.departingAirport} (${args.departingAirportCode})
-                `
-                }
-              ],
-              display: {
-                name: 'showFlights',
-                props: {
-                  summary: args
-                }
-              }
-            })
-
-            uiStream.update(
-              <BotCard>
-                <FlightStatus summary={args} />
-              </BotCard>
-            )
-          }
         }
       }
 
@@ -671,37 +422,15 @@ export const getUIStateFromAIState = (aiState: Chat) => {
       id: `${aiState.chatId}-${index}`,
       display:
         message.role === 'assistant' ? (
-          message.display?.name === 'showFlights' ? (
-            <BotCard>
-              <ListFlights summary={message.display.props.summary} />
-            </BotCard>
-          ) : message.display?.name === 'showSeatPicker' ? (
-            <BotCard>
-              <SelectSeats summary={message.display.props.summary} />
-            </BotCard>
-          ) : message.display?.name === 'showHotels' ? (
-            <BotCard>
-              <ListHotels />
-            </BotCard>
-          ) : message.content === 'The purchase has completed successfully.' ? (
-            <BotCard>
-              <PurchaseTickets status="expired" />
-            </BotCard>
-          ) : message.display?.name === 'showBoardingPass' ? (
-            <BotCard>
-              <BoardingPass summary={message.display.props.summary} />
-            </BotCard>
-          ) : message.display?.name === 'listDestinations' ? (
-            <BotCard>
-              <Destinations destinations={message.display.props.destinations} />
-            </BotCard>
-          ) : (
-            <BotMessage content={message.content} />
-          )
-        ) :message.role === 'user' ? (
+          <BotMessage content={message.content} />
+        ) : message.role === 'user' ? (
           message.display?.name === 'userImage' ? (
             <BotCard>
-              <img src={message.display.props.imageBase64} alt="User uploaded image" style={{maxWidth: '100%', height: 'auto'}} />
+              <img
+                src={message.display.props.imageBase64}
+                alt="User uploaded image"
+                style={{ maxWidth: '100%', height: 'auto' }}
+              />
             </BotCard>
           ) : (
             <UserMessage showAvatar>{message.content}</UserMessage>
