@@ -97,6 +97,8 @@ export function PromptForm({
 
           const file = event.target.files[0]
 
+          
+
           if (file.type.startsWith('video/')) {
             const responseMessage = await describeImage('')
             setMessages(currentMessages => [
@@ -107,9 +109,14 @@ export function PromptForm({
             const reader = new FileReader()
             reader.readAsDataURL(file)
 
+            console.log(reader);
+
             reader.onloadend = async () => {
               const base64String = reader.result
-              const responseMessage = await describeImage(base64String)
+              let responseMessage = await describeImage(base64String)
+              // responseMessage = "Hello this is my response";
+              console.log(responseMessage);
+              
               setMessages(currentMessages => [
                 ...currentMessages,
                 responseMessage

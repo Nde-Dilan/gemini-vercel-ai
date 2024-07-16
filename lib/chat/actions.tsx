@@ -35,6 +35,14 @@ import { Destinations } from '@/components/flights/destinations'
 import { Video } from '@/components/media/video'
 import { rateLimit } from './ratelimit'
 
+
+
+const AIResponse = ({ text }) => (
+  <div>
+    <h3>AI Analysis:</h3>
+    <p style={{ whiteSpace: 'pre-wrap' }}>{text}</p>
+  </div>
+)
 const genAI = new GoogleGenerativeAI(
   process.env.GOOGLE_GENERATIVE_AI_API_KEY || ''
 )
@@ -51,7 +59,7 @@ async function describeImage(imageBase64: string) {
 
   uiStream.update(
     <BotCard>
-      <Video isLoading />
+      <img src={imageBase64} alt="User uploaded image" style={{maxWidth: '100%', height: 'auto'}} />
     </BotCard>
   )
   ;(async () => {
@@ -65,24 +73,22 @@ async function describeImage(imageBase64: string) {
         await new Promise(resolve => setTimeout(resolve, 5000))
 
         text = `
-      The books in this image are:
-
-      1. The Little Prince by Antoine de Saint-Exupéry
-      2. The Prophet by Kahlil Gibran
-      3. Man's Search for Meaning by Viktor Frankl
-      4. The Alchemist by Paulo Coelho
-      5. The Kite Runner by Khaled Hosseini
-      6. To Kill a Mockingbird by Harper Lee
-      7. The Catcher in the Rye by J.D. Salinger
-      8. The Great Gatsby by F. Scott Fitzgerald
-      9. 1984 by George Orwell
-      10. Animal Farm by George Orwell
       `
       } else {
         const imageData = imageBase64.split(',')[1]
 
         const model = genAI.getGenerativeModel({ model: 'gemini-pro-vision' })
-        const prompt = 'List the books in this image.'
+        const prompt = `Please analyze the image I've provided and identify any medicinal plants present. For each plant you recognize:
+
+Provide the common name and scientific name (if possible).
+Describe the key visual characteristics that helped you identify it.
+Briefly mention its traditional medicinal uses in African, particularly Cameroonian, traditional medicine.
+Note any distinguishing features that differentiate it from similar-looking plants.
+If you're not completely certain about the identification, please indicate your level of confidence and mention any possible alternatives.
+
+If you can't identify specific plants, describe what you see in the image in detail, focusing on leaf shape, flower structure, bark texture, or any other notable features that could aid in identification.
+Important: If you recognize any plants that may be toxic or require careful handling, please highlight this information clearly.
+Remember, this identification is for informational purposes only and should not be used as a sole basis for medicinal use without expert verification.`
         const image = {
           inlineData: {
             data: imageData,
@@ -92,7 +98,7 @@ async function describeImage(imageBase64: string) {
 
         const result = await model.generateContent([prompt, image])
         text = result.response.text()
-        console.log(text)
+        console.log("Results: ", text)
       }
 
       spinnerStream.done(null)
@@ -100,10 +106,11 @@ async function describeImage(imageBase64: string) {
 
       uiStream.done(
         <BotCard>
-          <Video />
+          <img src={imageBase64} alt="User uploaded image" style={{maxWidth: '100%', height: 'auto'}} />
+          <AIResponse text={text} />
         </BotCard>
       )
-
+//TODO: Find the AIResponse component and replace the one that i
       aiState.done({
         ...aiState.get(),
         interactions: [text]
@@ -304,18 +311,24 @@ Remember to always prioritize user safety and emphasize that this advice does no
 
             aiState.done({
               ...aiState.get(),
-              interactions: [],
               messages: [
                 ...aiState.get().messages,
                 {
                   id: nanoid(),
-                  role: 'assistant',
-                  content: `Here's a list of holiday destinations based on the books you've read. Choose one to proceed to booking a flight. \n\n ${args.destinations.join(', ')}.`,
+                  role: 'user',
+                  content: 'User uploaded an image',
                   display: {
-                    name: 'listDestinations',
-                    props: {
-                      destinations
-                    }
+                    name: 'userImage',
+                    props: { imageBase64 }
+                  }
+                },
+                {
+                  id: nanoid(),
+                  role: 'assistant',
+                  content: text,
+                  display: {
+                    name: 'aiResponse',
+                    props: { text }
                   }
                 }
               ]
@@ -685,8 +698,14 @@ export const getUIStateFromAIState = (aiState: Chat) => {
           ) : (
             <BotMessage content={message.content} />
           )
-        ) : message.role === 'user' ? (
-          <UserMessage showAvatar>{message.content}</UserMessage>
+        ) :message.role === 'user' ? (
+          message.display?.name === 'userImage' ? (
+            <BotCard>
+              <img src={message.display.props.imageBase64} alt="User uploaded image" style={{maxWidth: '100%', height: 'auto'}} />
+            </BotCard>
+          ) : (
+            <UserMessage showAvatar>{message.content}</UserMessage>
+          )
         ) : (
           <BotMessage content={message.content} />
         )

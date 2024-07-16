@@ -35,8 +35,8 @@ export function ChatList({ messages, session, isShared }: ChatList) {
         </>
       ) : null}
 
-      {messages.map(message => (
-        <div key={message.id}>
+      {messages.map((message,i) => (
+        <div key={message.id + i}>
           {message.spinner}
           {message.display}
           {message.attachments}
