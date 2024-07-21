@@ -7,7 +7,7 @@ export function FooterText({ className, ...props }: React.ComponentProps<'p'>) {
   return (
     <p
       className={cn(
-        'px-2 text-center text-xs leading-normal text-zinc-500',
+        'px-2 text-center text-xs bg-dark-400 leading-normal text-zinc-500',
         className
       )}
       {...props}
@@ -16,11 +16,12 @@ export function FooterText({ className, ...props }: React.ComponentProps<'p'>) {
       <ExternalLink href="https://cloud.google.com/vertex-ai">
         Google Gemini
       </ExternalLink>
-      , By  <ExternalLink href={'https://techwithdilan.tech'}>Nde Dilan</ExternalLink>
+      ,
       <ExternalLink href="https://nextjs.org">Next.js</ExternalLink> and{' '}
       <ExternalLink href="https://github.com/vercel/ai">
         Vercel AI SDK
-      </ExternalLink>
+      </ExternalLink> {'  '}
+      By  <ExternalLink href={'https://techwithdilan.tech'}>Nde Dilan</ExternalLink>
       .
     </p>
   )

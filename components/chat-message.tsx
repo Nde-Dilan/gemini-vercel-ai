@@ -18,22 +18,22 @@ export interface ChatMessageProps {
 export function ChatMessage({ message, ...props }: ChatMessageProps) {
   return (
     <div
-      className={cn('group relative mb-4 flex items-start md:-ml-12')}
+      className={cn('group relative mb-4 flex items-start  text-white md:-ml-12')}
       {...props}
     >
       <div
         className={cn(
-          'flex size-8 shrink-0 select-none items-center justify-center rounded-lg border shadow',
+          'flex  text-white size-8 shrink-0 select-none items-center justify-center rounded-lg border shadow',
           message.role === 'user'
-            ? 'bg-background'
-            : 'bg-primary text-primary-foreground'
+            ? 'bg-background cursor-pointer text-yellow-50'
+            : 'bg-primary text-red-500'
         )}
       >
         {message.role === 'user' ? <IconUser /> : <IconGemini />}
       </div>
       <div className="flex-1 px-1 ml-4 space-y-2 overflow-hidden">
         <MemoizedReactMarkdown
-          className="prose break-words prose-p:leading-relaxed prose-pre:p-0"
+          className="prose  break-words prose-p:leading-relaxed prose-pre:p-0"
           remarkPlugins={[remarkGfm, remarkMath]}
           components={{
             p({ children }) {
@@ -54,7 +54,7 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
 
               if (inline) {
                 return (
-                  <code className={className} {...props}>
+                  <code className={className+ " text-white"} {...props}>
                     {children}
                   </code>
                 )

@@ -41,6 +41,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body
         className={cn(
           'font-sans antialiased',
+         " bg-dark-400",
           GeistSans.variable,
           GeistMono.variable
         )}
@@ -49,12 +50,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Toaster position="top-center" />
         <Providers
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-screen">
-            <Header />
+          <div className="flex bg-dark-400  flex-col min-h-screen">
+            <Header  />
             <main className="flex flex-col flex-1">{children}</main>
           </div>
           <TailwindIndicator />

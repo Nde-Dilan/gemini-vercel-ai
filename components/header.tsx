@@ -3,6 +3,7 @@ import * as React from 'react'
 import Link from 'next/link'
 
 import { cn } from '@/lib/utils'
+
 import { auth } from '@/auth'
 import { Button, buttonVariants } from '@/components/ui/button'
 import {
@@ -40,7 +41,7 @@ async function UserOrLogin() {
         {session?.user ? (
           <UserMenu user={session.user} />
         ) : (
-          <Button variant="link" asChild className="-ml-2">
+          <Button variant="link" asChild className="-ml-2 text-white">
             <Link href="/login">Login</Link>
           </Button>
         )}
@@ -51,23 +52,21 @@ async function UserOrLogin() {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between w-full h-16 px-4 shrink-0 bg-gradient-to-b from-background/10 via-background/50 to-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 flex items-center justify-between w-full h-16 px-4 shrink-0  bg-dark-400">
       <div className="flex items-center">
         <React.Suspense fallback={<div className="flex-1 overflow-auto" />}>
           <UserOrLogin />
         </React.Suspense>
       </div>
       <div className="flex items-center justify-end gap-2">
-        <Button asChild size="sm" variant="ghost">
-          <a
-            target="_blank"
-            href="https://carepulse-healtcare.vercel.app"
-            rel="noopener noreferrer"
-          >
-            <IconMessage />
-            <span className="hidden ml-2 md:flex">Book Appointment</span>
-          </a>
-        </Button>
+      <Button variant="outline" className="shad-primary-btn" asChild>
+            <Link  target="_blank"
+            rel="noopener noreferrer" href={"https://carepulse-healtcare.vercel.app"}>
+                          <IconMessage />
+
+              Book Appointments
+            </Link>
+          </Button>
         <Button asChild size="sm" className="rounded-lg gap-1">
           <a
             href="https://wa.me/237694525931"
